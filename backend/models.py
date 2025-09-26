@@ -8,10 +8,10 @@ db = SQLAlchemy()
 class BaseModel(db.Model):
     __abstract__ = True # should not create database in itself
     id = db.Column(db.Integer, primary_key = True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime(timezone = True), default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-class User(BaseModel):
+class User(BaseModel, UserMixin):
     name = db.Column(db.String(200))
     email = db.Column(db.String, unique = True, nullable = False)
     password = db.Column(db.String, nullable = False)
@@ -60,7 +60,7 @@ class SaleItem(BaseModel):
 
 class Sale(BaseModel):
     customer_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    date = db.Column(db.DateTime)
+    date = db.Column(db.DateTime(timezone = True))
 
     # relations
     sale_items = db.relationship("SaleItem", back_populates = "sale")
