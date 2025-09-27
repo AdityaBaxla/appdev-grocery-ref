@@ -1,9 +1,8 @@
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import UserMixin, RoleMixin
+from flask_security.core import UserMixin, RoleMixin
 from sqlalchemy import Enum
-
-db = SQLAlchemy()
+from extensions import db
 
 class BaseModel(db.Model):
     __abstract__ = True # should not create database in itself
@@ -23,6 +22,7 @@ class User(BaseModel, UserMixin):
     # relations
     sales = db.relationship("Sale", back_populates = "user")
 
+
 class Role(BaseModel, RoleMixin):
     name = db.Column(db.String, unique = True, nullable  = False)
     description = db.Column(db.String, nullable = False)
@@ -35,14 +35,14 @@ class Section(BaseModel):
     name = db.Column(db.String(80), nullable=False)
 
     # relations
-    products = db.relationship('Product', back_populates="section")
+    products = db.relationship('Product', back_populates="section", uselist=True)
 
 class Product(BaseModel):
     name = db.Column(db.String(80), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     in_stock = db.Column(db.Boolean, default=True)
     price_type = db.Column(db.Enum("kg", "litre"))
-    mfd = db.Column(db.DateTime)
+    mfd = db.Column(db.DateTime( timezone=True))
     expiry = db.Column(db.DateTime)
 
     # Foreign Keys

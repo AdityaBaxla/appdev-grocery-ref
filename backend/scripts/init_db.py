@@ -5,7 +5,7 @@ from flask_security.utils import hash_password
 with app.app_context():
     db.drop_all()
     db.create_all()
-    userdatastore = app.security.datastore
+    userdatastore = app.datastore
 
     admin_role = userdatastore.find_or_create_role('admin', description='superuser')
     customer_role = userdatastore.find_or_create_role('customer', description='general user')
