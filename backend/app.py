@@ -32,6 +32,8 @@ def test():
 def private():
     return {"message" : "should not access"}
 
+import resources
+
 app.app_context().push()
 
 if (__name__ == "__main__"):
