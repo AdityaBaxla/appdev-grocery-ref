@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from services.errors import InvalidEmailError, ServiceError, WrongPasswordError
 from config import LocalDevelopmentConfig
 from models import db, User, Role
 from flask_security.datastore import SQLAlchemyUserDatastore
@@ -15,9 +16,20 @@ db.init_app(app)
 datastore = SQLAlchemyUserDatastore(db, User, Role)
 app.security = Security(app, datastore=datastore, register_blueprint=False)
 
-# @app.errorhandler(401)
-# def unauthorized(error):
-#     return jsonify({'message': 'Unauthorized - Authentication required'}), 401
+# Global error handlers
+@app.errorhandler(ServiceError)
+def handle_service_error(error):
+    # Default to 400
+    code = 400
+    if isinstance(error, InvalidEmailError) or isinstance(error, WrongPasswordError):
+        code = 401
+    return jsonify({"message": str(error)}), code
+
+
+from resources import auth_bp
+
+# register blueprints
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
 @app.route('/login',endpoint='security.login', methods=['GET', 'POST'])
 def login():
@@ -31,8 +43,6 @@ def test():
 @auth_required()
 def private():
     return {"message" : "should not access"}
-
-import resources
 
 app.app_context().push()
 

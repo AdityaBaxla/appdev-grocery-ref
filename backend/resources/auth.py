@@ -1,8 +1,11 @@
-from flask import current_app as app, request, jsonify
+from flask import request, jsonify, Blueprint
 from flask_security.utils import verify_password
 from models import User
+from services.auth_service import AuthService
 
-@app.route('/api/login', methods=['POST'])
+auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
 
@@ -12,12 +15,4 @@ def login():
     if not email or not password:
         return jsonify({"message" : "invalid inputs"}), 404
     
-    user = User.query.filter_by(email = email).first_or_404()
-
-    if not user:
-        return jsonify({"message" : "invalid email"}), 404
-    
-    if verify_password(password, user.password):
-        return jsonify({'token' : user.get_auth_token(), 'email' : user.email, 'role' : user.roles[0].name, 'id' : user.id})
-    
-    return jsonify({'message' : 'password wrong'}), 400
+    return AuthService.login(email, password)
