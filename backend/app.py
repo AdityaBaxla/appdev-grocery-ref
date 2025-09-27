@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from services.errors import InvalidEmailError, ServiceError, WrongPasswordError
+from resources.errors import ResourceError, InvalidDataError
 from config import LocalDevelopmentConfig
 from models import db, User, Role
 from flask_security.datastore import SQLAlchemyUserDatastore
@@ -17,6 +18,13 @@ datastore = SQLAlchemyUserDatastore(db, User, Role)
 app.security = Security(app, datastore=datastore, register_blueprint=False)
 
 # Global error handlers
+@app.errorhandler(ResourceError)
+def handle_resource_error(error):
+    code = 400
+    if isinstance(error, InvalidDataError):
+        code = 422
+    return jsonify({"message": str(error)}), code
+
 @app.errorhandler(ServiceError)
 def handle_service_error(error):
     # Default to 400

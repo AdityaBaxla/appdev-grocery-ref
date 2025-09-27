@@ -1,7 +1,8 @@
 from flask import request, jsonify, Blueprint
 from flask_security.utils import verify_password
-from models import User
+from resources.errors import InvalidDataError
 from services.auth_service import AuthService
+
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -11,8 +12,9 @@ def login():
 
     email = data.get('email')
     password = data.get('password')
+    print(f"email : {email}, pass: {password}")
 
     if not email or not password:
-        return jsonify({"message" : "invalid inputs"}), 404
+        raise InvalidDataError("missing /improper data")
     
     return AuthService.login(email, password)
