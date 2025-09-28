@@ -33,7 +33,7 @@ class UserRoles(BaseModel):
 
 class Section(BaseModel):
     name = db.Column(db.String(80), nullable=False)
-
+    approved = db.Column(db.Boolean, default=False)
     # relations
     products = db.relationship('Product', back_populates="section", uselist=True)
 

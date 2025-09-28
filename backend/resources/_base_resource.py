@@ -32,8 +32,19 @@ class BaseModelResource(Resource):
     def put(self, item_id):
         item = self.service.get_by_id(item_id)
         args = self.parser.parse_args()
-        item = self.service.update(item, **args)
-        return marshal(item, self.marshal), 200
+        # PUT replace entire entity
+        full_payload = {field: args.get(field, None) for field in self.parser.args}
+        updated_item = self.service.update(item, **full_payload)
+        return marshal(updated_item, self.marshal), 200
+    
+    def patch(self, item_id):
+        item = self.service.get_by_id(item_id)
+        args = self.parser.parse_args()
+
+        # PATCH: only update provided fields
+        partial_payload = {k: v for k, v in args.items() if v is not None}
+        updated_item = self.service.update(item, **partial_payload)
+        return marshal(updated_item, self.marshal), 200
 
     def delete(self, item_id):
         item = self.service.get_by_id(item_id)

@@ -26,16 +26,16 @@ class BaseService:
     def get_by_id(cls, id):
         return cls.model.query.get_or_404(id)
     
-    # @classmethod
-    # def get_filtered(cls, filters: dict):
-    #     query = cls.model.query
+    @classmethod
+    def get_filtered(cls, filters: dict):
+        query = cls.model.query
 
-    #     for key, value in filters.items():
-    #         # Only apply filter if column exists in model
-    #         if hasattr(cls.model, key):
-    #             query = query.filter(getattr(cls.model, key) == value)
+        for key, value in filters.items():
+            # Only apply filter if column exists in model
+            if hasattr(cls.model, key):
+                query = query.filter(getattr(cls.model, key) == value)
 
-    #     return [obj.to_dict() for obj in query.all()]
+        return query.all()
 
 
     @classmethod

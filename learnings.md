@@ -143,3 +143,12 @@ def check_revoked_token(sender, token, **extra):
 * **Refresh tokens:** Flask-Security doesn’t provide refresh tokens by default; you’d need to implement that separately if desired.
 
 ----------------------------------------------------
+
+
+
+
+Resource/Controller : validated data coming from client, authorization, authentication, http concerns (codes), Data Transformation (Serialization/Deserialization), Orchestration of service, handle query parameters
+```Controllers should never contain business rules, just orchestrate them.```
+
+Service: Data integrity, Storing and interacting with db, Validate Business Rules (user can create only one account, only 5 books can be borrowed), External Integrations
+```Keep services completely unaware of HTTP or Flask; they should work even if called from a CLI script or a background job.```
