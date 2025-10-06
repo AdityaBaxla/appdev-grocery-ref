@@ -152,3 +152,5 @@ Resource/Controller : validated data coming from client, authorization, authenti
 
 Service: Data integrity, Storing and interacting with db, Validate Business Rules (user can create only one account, only 5 books can be borrowed), External Integrations
 ```Keep services completely unaware of HTTP or Flask; they should work even if called from a CLI script or a background job.```
+
+Added a new step
